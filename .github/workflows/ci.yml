@@ -21,3 +21,14 @@ jobs:
       - name: Enrich metadata (sanity)
         run: |
           if [ -f outputs/arxiv_results.csv ]; then python scripts/enrich_metadata.py --csv outputs/arxiv_results.csv --out outputs || true; fi
+      - name: Build LaTeX paper
+        run: |
+          sudo apt-get update && sudo apt-get install -y texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended texlive-bibtex-extra texlive-science
+          chmod +x scripts/build_paper.sh
+          ./scripts/build_paper.sh || true
+      - name: Upload PDF artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: paper-pdf
+          path: latex/main.pdf
